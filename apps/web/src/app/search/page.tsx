@@ -1,6 +1,8 @@
 'use client';
+
 import { useState, useCallback, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useDebounce } from '../../hooks/useDebounce';
 import { searchAnime } from '../../../lib/api-client';
 
 interface AnimeResult {
@@ -11,15 +13,6 @@ interface AnimeResult {
   sub: number;
   dub: number;
   eps: number;
-}
-
-function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
-  useEffect(() => {
-    const handler = setTimeout(() => setDebouncedValue(value), delay);
-    return () => clearTimeout(handler);
-  }, [value, delay]);
-  return debouncedValue;
 }
 
 const SearchSkeleton = () => (
