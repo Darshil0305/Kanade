@@ -1,0 +1,43 @@
+{
+  "name": "@kanade/api",
+  "version": "0.1.0",
+  "description": "Core API client for HiAnime API integration in Kanade",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "type-check": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "clean": "rm -rf dist coverage"
+  },
+  "keywords": [
+    "anime",
+    "api",
+    "hianime",
+    "streaming",
+    "typescript"
+  ],
+  "dependencies": {
+    "axios": "^1.6.2",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.8",
+    "@types/node": "^20.10.0",
+    "eslint": "^8.56.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.3.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Darshil0305/kanade.git",
+    "directory": "packages/api"
+  },
+  "private": true
+}
