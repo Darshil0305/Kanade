@@ -1,5 +1,4 @@
 'use client';
-
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
 import Hls from 'hls.js';
@@ -104,7 +103,7 @@ export default function EpisodeWatchPage() {
         console.log('HLS manifest loaded, starting playback');
       });
       
-      hls.on(Hls.Events.ERROR, (event, data) => {
+      hls.on(Hls.Events.ERROR, (event: string, data: Hls.ErrorData) => {
         console.error('HLS Error:', data);
         if (data.fatal) {
           setError(`Playback error: ${data.details}`);
@@ -186,7 +185,7 @@ export default function EpisodeWatchPage() {
           controls
           preload="metadata"
           crossOrigin="anonymous"
-          onError={(e) => {
+          onError={(e: React.SyntheticEvent<HTMLVideoElement, Event>) => {
             console.error('Video error:', e);
             setError('Video playback failed. The source might be unavailable.');
           }}
@@ -194,7 +193,7 @@ export default function EpisodeWatchPage() {
           {episodeData?.subtitles?.map((subtitle, index) => (
             <track
               key={index}
-              kind={subtitle.kind as any}
+              kind={subtitle.kind as TextTrackKind}
               src={subtitle.file}
               label={subtitle.label}
               srcLang={subtitle.label.toLowerCase()}
@@ -208,7 +207,7 @@ export default function EpisodeWatchPage() {
           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
             <div className="text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-2"></div>
-              <p>Loading video...</p>
+              Loading video...
             </div>
           </div>
         )}
@@ -232,7 +231,7 @@ export default function EpisodeWatchPage() {
               <label className="block text-sm font-medium mb-2">Quality:</label>
               <select
                 value={currentQuality}
-                onChange={(e) => setCurrentQuality(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setCurrentQuality(e.target.value)}
                 className="bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white"
               >
                 <option value="auto">Auto</option>
