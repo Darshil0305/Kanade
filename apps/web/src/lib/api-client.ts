@@ -27,6 +27,10 @@ async function apiFetch<T = any>(
 ): Promise<T> {
   const url = `${HIANIME_API_BASE}${endpoint}`
   
+  // Log the exact URL being requested
+  console.log(`[API] Making request to: ${url}`)
+  console.log(`[API] Endpoint: ${endpoint}`)
+  
   try {
     const response = await fetch(url, {
       headers: {
@@ -36,27 +40,42 @@ async function apiFetch<T = any>(
       },
       ...options,
     })
-
+    
+    console.log(`[API] Response status: ${response.status} ${response.statusText}`)
+    
     if (!response.ok) {
       const errorText = await response.text().catch(() => 'Unknown error')
+      console.error(`[API] Request failed:`, {
+        url,
+        status: response.status,
+        statusText: response.statusText,
+        error: errorText
+      })
       throw new HiAnimeAPIError(
         `API request failed: ${response.status} ${response.statusText} - ${errorText}`,
         response.status,
         endpoint
       )
     }
-
+    
     const data = await response.json()
+    console.log(`[API] Response data structure:`, {
+      success: data.success,
+      hasData: !!data.data,
+      dataKeys: data.data ? Object.keys(data.data) : [],
+      messageType: typeof data.message
+    })
     
     // Check if the API returned an error in the response body
     if (data.error || data.status === false) {
+      console.error(`[API] API returned error:`, data)
       throw new HiAnimeAPIError(
         data.message || data.error || 'API returned error',
         response.status,
         endpoint
       )
     }
-
+    
     return data
   } catch (error) {
     if (error instanceof HiAnimeAPIError) {
@@ -64,6 +83,11 @@ async function apiFetch<T = any>(
     }
     
     // Network or other errors
+    console.error(`[API] Network/fetch error:`, {
+      url,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined
+    })
     throw new HiAnimeAPIError(
       `Network error: ${error instanceof Error ? error.message : 'Unknown error'}`,
       undefined,
@@ -148,11 +172,10 @@ class HiAnimeAPI {
       q: query,
       page: page.toString(),
     })
-
     if (type && type !== 'all') params.append('type', type)
     if (status && status !== 'all') params.append('status', status)
     if (genre) params.append('genre', genre)
-
+    
     const result = await apiFetch<SearchResult>(`/anime/search?${params.toString()}`)
     
     // Transform the response to ensure compatibility
@@ -162,12 +185,12 @@ class HiAnimeAPI {
         poster: anime.poster || anime.image // Ensure poster field exists
       }))
     }
-
     return result
   }
 
   /**
    * Get detailed information about an anime
+   * Updated to use correct endpoint format
    */
   async getAnimeInfo(animeId: string): Promise<{
     anime: Anime & {
@@ -176,7 +199,11 @@ class HiAnimeAPI {
       relations?: Anime[]
     }
   }> {
-    return apiFetch(`/anime/info?id=${encodeURIComponent(animeId)}`)
+    console.log(`[API] Getting anime info for ID: ${animeId}`)
+    // Try the correct endpoint format: /anime/info?id=anime-id
+    const result = await apiFetch(`/anime/info?id=${encodeURIComponent(animeId)}`)
+    console.log(`[API] Anime info result:`, result)
+    return result
   }
 
   /**
@@ -252,9 +279,24 @@ class HiAnimeAPI {
 
   /**
    * Generic GET request method for compatibility
+   * Updated with better logging and endpoint handling
    */
   async get(endpoint: string): Promise<any> {
-    return apiFetch(endpoint)
+    console.log(`[API] Generic GET request to endpoint: ${endpoint}`)
+    
+    // Handle both direct calls and calls that expect to use /anime/ prefix
+    let finalEndpoint = endpoint
+    
+    // If the endpoint starts with /anime/ and we're trying to get anime info,
+    // convert it to the correct format
+    if (endpoint.startsWith('/anime/') && !endpoint.includes('?') && !endpoint.includes('search')) {
+      const animeId = endpoint.replace('/anime/', '')
+      console.log(`[API] Converting /anime/${animeId} to /anime/info?id=${animeId}`)
+      finalEndpoint = `/anime/info?id=${encodeURIComponent(animeId)}`
+    }
+    
+    console.log(`[API] Final endpoint: ${finalEndpoint}`)
+    return apiFetch(finalEndpoint)
   }
 }
 
