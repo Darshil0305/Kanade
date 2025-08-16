@@ -21,7 +21,7 @@ export class HiAnimeClient {
   private config: Required<ClientConfig>;
   constructor(config: ClientConfig = {}) {
     this.config = {
-      baseUrl: config.baseUrl || 'https://holo-proxywithered-fog-e2ca.darshilp0305.workers.dev',
+      baseUrl: config.baseUrl || 'https://hianime-api-qdks.onrender.com/api/v1',
       timeout: config.timeout || 30000,
       retries: config.retries || 3,
       retryDelay: config.retryDelay || 1000,
