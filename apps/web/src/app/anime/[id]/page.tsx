@@ -1,9 +1,8 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
-import { apiClient } from "../../lib/api-client";
+import { apiClient } from "../../../lib/api-client";
 
 interface AnimeDetails {
   id: string;
@@ -195,7 +194,7 @@ export default function AnimeDetailsPage() {
                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 px-8 rounded-lg transform transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-xl flex items-center gap-2"
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" />
+                  <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path>
                 </svg>
                 Watch Now
               </button>
@@ -210,7 +209,7 @@ export default function AnimeDetailsPage() {
           <div className="bg-gray-800/50 rounded-lg p-6 backdrop-blur-sm">
             <h2 className="text-2xl font-bold text-white mb-4">Synopsis</h2>
             <div className="text-gray-300 leading-relaxed">
-              <p className={`${!isDescriptionExpanded ? 'line-clamp-4' : ''}`}>
+              <p className={`${!isDescriptionExpanded ? 'line-clamp-3' : ''}`}>
                 {anime.description}
               </p>
               {anime.description.length > 300 && (
