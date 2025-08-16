@@ -23,6 +23,7 @@
     "typescript"
   ],
   "dependencies": {
+    "@kanade/types": "workspace:*",
     "axios": "^1.6.2",
     "zod": "^3.22.4"
   },
