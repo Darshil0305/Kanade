@@ -1,7 +1,6 @@
 'use client';
-
 import React, { useState, useEffect } from 'react';
-import { hiAnimeClient } from '@/lib/api-client';
+import { hiAnimeClient } from '@kanade/api';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -28,7 +27,7 @@ interface SearchResponse {
 
 const AnimeCard: React.FC<{ anime: AnimeResult }> = ({ anime }) => {
   return (
-    <Link href={`/anime/${anime.id}`} className="group">
+    <Link className="group" href={`/anime/${anime.id}`}>
       <div className="relative flex-shrink-0 w-48 h-72 rounded-lg overflow-hidden bg-gray-800 transition-transform duration-300 group-hover:scale-105 group-hover:z-10">
         <Image
           src={anime.poster}
@@ -76,7 +75,7 @@ const HorizontalCarousel: React.FC<{
         <h2 className="text-2xl font-bold text-white mb-4">{title}</h2>
         <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-4">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="flex-shrink-0 w-48 h-72 rounded-lg bg-gray-700 animate-pulse" />
+            <div className="flex-shrink-0 w-48 h-72 rounded-lg bg-gray-700 animate-pulse" key={i} />
           ))}
         </div>
       </div>
@@ -90,7 +89,7 @@ const HorizontalCarousel: React.FC<{
       <h2 className="text-2xl font-bold text-white mb-4">{title}</h2>
       <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-4 hover:scrollbar-default">
         {animes.map((anime) => (
-          <AnimeCard key={anime.id} anime={anime} />
+          <AnimeCard anime={anime} key={anime.id} />
         ))}
       </div>
     </div>
@@ -210,7 +209,7 @@ const SearchPage: React.FC = () => {
             
             {loading && hasSearched && (
               <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-red-500"></div>
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-red-500" />
               </div>
             )}
           </div>
@@ -224,7 +223,11 @@ const SearchPage: React.FC = () => {
           <div className="bg-red-900/20 border border-red-500 text-red-300 px-4 py-3 rounded-lg mb-8">
             <div className="flex items-center">
               <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                <path
+                  clipRule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  fillRule="evenodd"
+                />
               </svg>
               {error}
             </div>
