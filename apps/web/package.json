@@ -18,6 +18,7 @@
     "export": "next build && next export"
   },
   "dependencies": {
+    "@kanade/types": "workspace:*",
     "@kanade/ui": "workspace:*",
     "hls.js": "^1.5.11",
     "next": "^15.0.0",
