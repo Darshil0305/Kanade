@@ -204,7 +204,7 @@ export class HiAnimeClient {
       limit: limit.toString()
     });
     const response = await this.makeRequest<SearchResult>(
-      `${API_ENDPOINTS.POPULAR}?${params.toString()}`
+      `/animes/most-popular?${params.toString()}`
     );
     if (!response.success || !response.data) {
       throw new ApiError('Failed to fetch popular anime', 0, 'POPULAR_ERROR');
