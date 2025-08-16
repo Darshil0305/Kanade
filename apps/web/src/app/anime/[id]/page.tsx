@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
-import { apiClient } from "../../../lib/api-client";
+import { hiAnimeClient } from '@kanade/api';
 
 interface AnimeDetails {
   id: string;
@@ -59,7 +59,7 @@ export default function AnimeDetailsPage() {
       try {
         setLoading(true);
         setError(null);
-        const response = await apiClient.get(`/anime/${id}`);
+        const response = await hiAnimeClient.getAnimeInfo(id as string);
         
         if (response.success) {
           setAnime(response.data.anime);
@@ -194,7 +194,7 @@ export default function AnimeDetailsPage() {
                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 px-8 rounded-lg transform transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-xl flex items-center gap-2"
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path>
+                  <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" />
                 </svg>
                 Watch Now
               </button>
@@ -231,7 +231,7 @@ export default function AnimeDetailsPage() {
           <h2 className="text-2xl font-bold text-white mb-6">Seasons</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
             {anime.seasons.map((season) => (
-              <div key={season.id} className="group cursor-pointer">
+              <div className="group cursor-pointer" key={season.id}>
                 <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-gray-800">
                   <Image
                     src={season.poster}
@@ -260,7 +260,7 @@ export default function AnimeDetailsPage() {
           <h2 className="text-2xl font-bold text-white mb-6">Related Anime</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
             {anime.relations.map((related) => (
-              <div key={related.id} className="group cursor-pointer">
+              <div className="group cursor-pointer" key={related.id}>
                 <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-gray-800">
                   <Image
                     src={related.poster}
@@ -287,7 +287,7 @@ export default function AnimeDetailsPage() {
           <h2 className="text-2xl font-bold text-white mb-6">Recommended For You</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
             {anime.recommendations.map((rec) => (
-              <div key={rec.id} className="group cursor-pointer">
+              <div className="group cursor-pointer" key={rec.id}>
                 <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-gray-800">
                   <Image
                     src={rec.poster}
