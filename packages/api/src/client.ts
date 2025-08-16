@@ -12,7 +12,6 @@ import {
   API_ENDPOINTS,
   Schemas 
 } from '@kanade/types';
-
 /**
  * HiAnime API Client
  * A comprehensive TypeScript client for interacting with HiAnime API
@@ -133,6 +132,13 @@ export class HiAnimeClient {
     // Validate response data
     const validatedData = Schemas.SearchResult.parse(response.data);
     return validatedData;
+  }
+
+  /**
+   * Alias for search method - backward compatibility
+   */
+  async searchAnime(query: string, filters: SearchFilters = {}): Promise<SearchResult> {
+    return this.search(query, filters);
   }
 
   /**
