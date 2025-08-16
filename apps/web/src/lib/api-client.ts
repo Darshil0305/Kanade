@@ -2,7 +2,6 @@
  * HiAnime API Client for Kanade
  * Base URL: https://hianime-api-qdks.onrender.com/api/v1
  */
-
 const HIANIME_API_BASE = 'https://hianime-api-qdks.onrender.com/api/v1'
 
 /**
@@ -90,6 +89,47 @@ export interface Anime {
   duration?: string
 }
 
+export interface AnimeDetails {
+  id: string
+  title: string
+  poster: string
+  description: string
+  genres: string[]
+  totalEpisodes: number
+  type: string
+  status: string
+  otherNames?: string[]
+  studios?: string[]
+  producers?: string[]
+  aired?: {
+    from?: string
+    to?: string
+  }
+  duration?: string
+  rating?: string
+  recommendations?: {
+    id: string
+    title: string
+    poster: string
+    episodes: {
+      sub: number
+      dub: number
+    }
+  }[]
+  relations?: {
+    id: string
+    title: string
+    poster: string
+    type: string
+  }[]
+  seasons?: {
+    id: string
+    title: string
+    poster: string
+    isCurrent: boolean
+  }[]
+}
+
 export interface Episode {
   id: string
   number: number
@@ -167,6 +207,60 @@ class HiAnimeAPI {
   }
 
   /**
+   * Get detailed information about an anime (alias for compatibility)
+   * This method maps the API response to match the expected AnimeDetails interface
+   */
+  async getAnimeDetails(animeId: string): Promise<AnimeDetails> {
+    try {
+      const response = await apiFetch(`/anime/info?id=${encodeURIComponent(animeId)}`)
+      
+      // Map the API response to our AnimeDetails interface
+      const animeData = response.anime || response
+      
+      return {
+        id: animeData.id || animeId,
+        title: animeData.title || animeData.name || 'Unknown Title',
+        poster: animeData.image || animeData.poster || '',
+        description: animeData.description || animeData.synopsis || '',
+        genres: animeData.genres || [],
+        totalEpisodes: animeData.totalEpisodes || animeData.episodes?.length || 0,
+        type: animeData.type || 'Unknown',
+        status: animeData.status || 'Unknown',
+        otherNames: animeData.otherNames || animeData.synonyms || [],
+        studios: animeData.studios || [],
+        producers: animeData.producers || [],
+        aired: animeData.aired || {},
+        duration: animeData.duration || '',
+        rating: animeData.rating || animeData.score || '',
+        recommendations: animeData.recommendations?.map((rec: any) => ({
+          id: rec.id,
+          title: rec.title || rec.name,
+          poster: rec.image || rec.poster,
+          episodes: {
+            sub: rec.episodes?.sub || rec.subEpisodes || 0,
+            dub: rec.episodes?.dub || rec.dubEpisodes || 0
+          }
+        })) || [],
+        relations: animeData.relations?.map((rel: any) => ({
+          id: rel.id,
+          title: rel.title || rel.name,
+          poster: rel.image || rel.poster,
+          type: rel.type || 'Related'
+        })) || [],
+        seasons: animeData.seasons?.map((season: any) => ({
+          id: season.id,
+          title: season.title || season.name,
+          poster: season.image || season.poster,
+          isCurrent: season.isCurrent || false
+        })) || []
+      }
+    } catch (error) {
+      console.error('Error fetching anime details:', error)
+      throw error
+    }
+  }
+
+  /**
    * Get streaming servers for an episode
    */
   async getEpisodeServers(episodeId: string): Promise<{
@@ -239,9 +333,10 @@ class HiAnimeAPI {
 }
 
 /**
- * Export the API client instance
+ * Export the API client instance with both names for compatibility
  */
 export const hiAnimeApi = new HiAnimeAPI()
+export const KanadeAPIClient = new HiAnimeAPI()
 
 /**
  * Export error class for error handling
