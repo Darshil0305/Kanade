@@ -209,8 +209,23 @@ export class HiAnimeClient {
     if (!response.success || !response.data) {
       throw new ApiError('Failed to fetch popular anime', 0, 'POPULAR_ERROR');
     }
-    const validatedData = Schemas.SearchResult.parse(response.data);
-    return validatedData;
+    try {
+      const validatedData = Schemas.SearchResult.parse(response.data);
+      return validatedData;
+    } catch (parseError) {
+      console.error('[HiAnime API] Failed to parse popular anime response:', response.data);
+      console.warn('[HiAnime API] Using fallback for invalid API data in getPopular');
+      
+      // Fallback: try to use the raw array result property
+      const fallbackData = {
+        results: response.data.results || response.data.animes || [],
+        totalPages: response.data.totalPages || 1,
+        hasNextPage: response.data.hasNextPage || false,
+        currentPage: response.data.currentPage || page
+      };
+      
+      return fallbackData as SearchResult;
+    }
   }
   /**
    * Get recently updated anime
