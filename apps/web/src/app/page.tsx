@@ -2,7 +2,18 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { hiAnimeApi, handleAPIError } from '../../lib/api-client'
+import { hianimeClient as hiAnimeApi, ApiError } from '@kanade/api'
+
+// Helper function to handle API errors
+const handleAPIError = (error: unknown): string => {
+  if (error instanceof ApiError) {
+    return error.message
+  }
+  if (error instanceof Error) {
+    return error.message
+  }
+  return 'An unknown error occurred'
+}
 
 interface Anime {
   id: string
@@ -56,7 +67,7 @@ export default function HomePage() {
         setLoading(false)
       }
     }
-
+    
     fetchHomeData()
   }, [])
 
@@ -168,7 +179,7 @@ export default function HomePage() {
   // Enhanced AnimeSection component
   const AnimeSection = ({ title, animes, emoji }: { title: string; animes?: Anime[]; emoji: string }) => {
     if (!animes || animes.length === 0) return null
-
+    
     return (
       <section className="mb-12">
         <div className="flex items-center justify-between mb-6">
@@ -229,7 +240,7 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-
+      
       {/* Content Sections */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <AnimeSection title="Spotlight Anime" animes={homeData.spotlightAnimes} emoji="🔥" />
