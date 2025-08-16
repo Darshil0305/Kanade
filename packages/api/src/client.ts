@@ -19,10 +19,9 @@ import {
 export class HiAnimeClient {
   private axios: AxiosInstance;
   private config: Required<ClientConfig>;
-
   constructor(config: ClientConfig = {}) {
     this.config = {
-      baseUrl: config.baseUrl || 'https://hianime.to',
+      baseUrl: config.baseUrl || 'https://holo-proxywithered-fog-e2ca.darshilp0305.workers.dev',
       timeout: config.timeout || 30000,
       retries: config.retries || 3,
       retryDelay: config.retryDelay || 1000,
@@ -30,7 +29,6 @@ export class HiAnimeClient {
       enableLogging: config.enableLogging || false,
       headers: config.headers || {}
     };
-
     this.axios = axios.create({
       baseURL: this.config.baseUrl,
       timeout: this.config.timeout,
@@ -40,10 +38,8 @@ export class HiAnimeClient {
         ...this.config.headers
       }
     });
-
     this.setupInterceptors();
   }
-
   private setupInterceptors(): void {
     // Request interceptor
     this.axios.interceptors.request.use(
@@ -55,7 +51,6 @@ export class HiAnimeClient {
       },
       (error) => Promise.reject(error)
     );
-
     // Response interceptor
     this.axios.interceptors.response.use(
       (response) => response,
@@ -67,7 +62,6 @@ export class HiAnimeClient {
       }
     );
   }
-
   private handleApiError(error: any): ApiError {
     if (error.response) {
       return new ApiError(
@@ -82,7 +76,6 @@ export class HiAnimeClient {
       return new ApiError(error.message, 0, 'UNKNOWN_ERROR');
     }
   }
-
   private async makeRequest<T>(
     url: string, 
     config: RequestConfig = {}
@@ -97,7 +90,6 @@ export class HiAnimeClient {
       throw this.handleApiError(error);
     }
   }
-
   /**
    * Search for anime with filters
    */
@@ -108,7 +100,6 @@ export class HiAnimeClient {
       page: filters.page || 1,
       limit: filters.limit || 20
     };
-
     const params = new URLSearchParams({
       q: query,
       ...searchFilters.genre && { genre: searchFilters.genre.join(',') },
@@ -120,27 +111,22 @@ export class HiAnimeClient {
       page: searchFilters.page.toString(),
       limit: searchFilters.limit.toString()
     });
-
     const response = await this.makeRequest<SearchResult>(
       `${API_ENDPOINTS.SEARCH}?${params.toString()}`
     );
-
     if (!response.success || !response.data) {
       throw new ApiError('Search failed', 0, 'SEARCH_ERROR');
     }
-
     // Validate response data
     const validatedData = Schemas.SearchResult.parse(response.data);
     return validatedData;
   }
-
   /**
    * Alias for search method - backward compatibility
    */
   async searchAnime(query: string, filters: SearchFilters = {}): Promise<SearchResult> {
     return this.search(query, filters);
   }
-
   /**
    * Get detailed information about a specific anime
    */
@@ -148,20 +134,16 @@ export class HiAnimeClient {
     if (!animeId) {
       throw new ApiError('Anime ID is required', 400, 'INVALID_PARAM');
     }
-
     const response = await this.makeRequest<Anime>(
       `${API_ENDPOINTS.ANIME_INFO}/${animeId}`
     );
-
     if (!response.success || !response.data) {
       throw new ApiError('Failed to fetch anime information', 0, 'ANIME_INFO_ERROR');
     }
-
     // Validate response data
     const validatedData = Schemas.Anime.parse(response.data);
     return validatedData;
   }
-
   /**
    * Get episode list for a specific anime
    */
@@ -169,20 +151,16 @@ export class HiAnimeClient {
     if (!animeId) {
       throw new ApiError('Anime ID is required', 400, 'INVALID_PARAM');
     }
-
     const response = await this.makeRequest<Episode[]>(
       `${API_ENDPOINTS.EPISODES}/${animeId}`
     );
-
     if (!response.success || !response.data) {
       throw new ApiError('Failed to fetch episodes', 0, 'EPISODES_ERROR');
     }
-
     // Validate response data
     const validatedData = response.data.map(episode => Schemas.Episode.parse(episode));
     return validatedData;
   }
-
   /**
    * Get streaming sources for a specific episode
    */
@@ -190,20 +168,16 @@ export class HiAnimeClient {
     if (!episodeId) {
       throw new ApiError('Episode ID is required', 400, 'INVALID_PARAM');
     }
-
     const response = await this.makeRequest<EpisodeSources>(
       `${API_ENDPOINTS.EPISODE_SOURCES}/${episodeId}`
     );
-
     if (!response.success || !response.data) {
       throw new ApiError('Failed to fetch episode sources', 0, 'SOURCES_ERROR');
     }
-
     // Validate response data
     const validatedData = Schemas.EpisodeSources.parse(response.data);
     return validatedData;
   }
-
   /**
    * Get trending anime
    */
@@ -212,19 +186,15 @@ export class HiAnimeClient {
       page: page.toString(),
       limit: limit.toString()
     });
-
     const response = await this.makeRequest<SearchResult>(
       `${API_ENDPOINTS.TRENDING}?${params.toString()}`
     );
-
     if (!response.success || !response.data) {
       throw new ApiError('Failed to fetch trending anime', 0, 'TRENDING_ERROR');
     }
-
     const validatedData = Schemas.SearchResult.parse(response.data);
     return validatedData;
   }
-
   /**
    * Get popular anime
    */
@@ -233,19 +203,15 @@ export class HiAnimeClient {
       page: page.toString(),
       limit: limit.toString()
     });
-
     const response = await this.makeRequest<SearchResult>(
       `${API_ENDPOINTS.POPULAR}?${params.toString()}`
     );
-
     if (!response.success || !response.data) {
       throw new ApiError('Failed to fetch popular anime', 0, 'POPULAR_ERROR');
     }
-
     const validatedData = Schemas.SearchResult.parse(response.data);
     return validatedData;
   }
-
   /**
    * Get recently updated anime
    */
@@ -254,46 +220,36 @@ export class HiAnimeClient {
       page: page.toString(),
       limit: limit.toString()
     });
-
     const response = await this.makeRequest<SearchResult>(
       `${API_ENDPOINTS.RECENT}?${params.toString()}`
     );
-
     if (!response.success || !response.data) {
       throw new ApiError('Failed to fetch recent anime', 0, 'RECENT_ERROR');
     }
-
     const validatedData = Schemas.SearchResult.parse(response.data);
     return validatedData;
   }
-
   /**
    * Get a random anime
    */
   async getRandom(): Promise<Anime> {
     const response = await this.makeRequest<Anime>(API_ENDPOINTS.RANDOM);
-
     if (!response.success || !response.data) {
       throw new ApiError('Failed to fetch random anime', 0, 'RANDOM_ERROR');
     }
-
     const validatedData = Schemas.Anime.parse(response.data);
     return validatedData;
   }
-
   /**
    * Get available genres
    */
   async getGenres(): Promise<string[]> {
     const response = await this.makeRequest<string[]>(API_ENDPOINTS.GENRES);
-
     if (!response.success || !response.data) {
       throw new ApiError('Failed to fetch genres', 0, 'GENRES_ERROR');
     }
-
     return response.data;
   }
-
   /**
    * Update client configuration
    */
@@ -316,7 +272,6 @@ export class HiAnimeClient {
       };
     }
   }
-
   /**
    * Get current client configuration
    */
@@ -324,10 +279,8 @@ export class HiAnimeClient {
     return { ...this.config };
   }
 }
-
 // Export a default instance for convenience
 export const hiAnimeClient = new HiAnimeClient();
-
 // Export the class and utilities
 export default HiAnimeClient;
 export { ApiError } from '@kanade/types';
