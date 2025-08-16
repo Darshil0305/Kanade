@@ -93,7 +93,6 @@ export class HiAnimeClient {
         timeout: config.timeout || this.config.timeout,
         headers: config.headers || {}
       });
-
       return response.data;
     } catch (error) {
       throw this.handleApiError(error);
@@ -104,16 +103,23 @@ export class HiAnimeClient {
    * Search for anime with filters
    */
   async search(query: string, filters: SearchFilters = {}): Promise<SearchResult> {
+    // Provide default values for required fields
+    const searchFilters = {
+      ...filters,
+      page: filters.page || 1,
+      limit: filters.limit || 20
+    };
+
     const params = new URLSearchParams({
       q: query,
-      ...filters.genre && { genre: filters.genre.join(',') },
-      ...filters.year && { year: filters.year.toString() },
-      ...filters.season && { season: filters.season },
-      ...filters.status && { status: filters.status },
-      ...filters.type && { type: filters.type },
-      ...filters.sort && { sort: filters.sort },
-      page: filters.page?.toString() || '1',
-      limit: filters.limit?.toString() || '20'
+      ...searchFilters.genre && { genre: searchFilters.genre.join(',') },
+      ...searchFilters.year && { year: searchFilters.year.toString() },
+      ...searchFilters.season && { season: searchFilters.season },
+      ...searchFilters.status && { status: searchFilters.status },
+      ...searchFilters.type && { type: searchFilters.type },
+      ...searchFilters.sort && { sort: searchFilters.sort },
+      page: searchFilters.page.toString(),
+      limit: searchFilters.limit.toString()
     });
 
     const response = await this.makeRequest<SearchResult>(
@@ -195,9 +201,14 @@ export class HiAnimeClient {
   /**
    * Get trending anime
    */
-  async getTrending(page: number = 1): Promise<SearchResult> {
+  async getTrending(page: number = 1, limit: number = 20): Promise<SearchResult> {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString()
+    });
+
     const response = await this.makeRequest<SearchResult>(
-      `${API_ENDPOINTS.TRENDING}?page=${page}`
+      `${API_ENDPOINTS.TRENDING}?${params.toString()}`
     );
 
     if (!response.success || !response.data) {
@@ -211,9 +222,14 @@ export class HiAnimeClient {
   /**
    * Get popular anime
    */
-  async getPopular(page: number = 1): Promise<SearchResult> {
+  async getPopular(page: number = 1, limit: number = 20): Promise<SearchResult> {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString()
+    });
+
     const response = await this.makeRequest<SearchResult>(
-      `${API_ENDPOINTS.POPULAR}?page=${page}`
+      `${API_ENDPOINTS.POPULAR}?${params.toString()}`
     );
 
     if (!response.success || !response.data) {
@@ -227,9 +243,14 @@ export class HiAnimeClient {
   /**
    * Get recently updated anime
    */
-  async getRecent(page: number = 1): Promise<SearchResult> {
+  async getRecent(page: number = 1, limit: number = 20): Promise<SearchResult> {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString()
+    });
+
     const response = await this.makeRequest<SearchResult>(
-      `${API_ENDPOINTS.RECENT}?page=${page}`
+      `${API_ENDPOINTS.RECENT}?${params.toString()}`
     );
 
     if (!response.success || !response.data) {
