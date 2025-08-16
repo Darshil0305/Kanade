@@ -17,6 +17,9 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
+  "dependencies": {
+    "@kanade/types": "workspace:*"
+  },
   "peerDependencies": {
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
