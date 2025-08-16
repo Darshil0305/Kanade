@@ -1,24 +1,15 @@
 'use client';
-
 import { useState, useCallback, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useDebounce } from '../../hooks/useDebounce';
-import { searchAnime } from '../../../lib/api-client';
+import { searchAnime, hiAnimeApi, Anime } from '../../../lib/api-client';
 
-interface AnimeResult {
-  id: string;
-  title: string;
-  poster: string;
-  type: string;
-  sub: number;
-  dub: number;
-  eps: number;
-}
+interface AnimeResult extends Anime {}
 
 const SearchSkeleton = () => (
   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
     {Array(20).fill(0).map((_, i) => (
-      <div key={i} className="bg-gray-200 animate-pulse rounded-lg">
+      <div className="bg-gray-200 animate-pulse rounded-lg" key={i}>
         <div className="aspect-[3/4] bg-gray-300 rounded-lg mb-2"></div>
         <div className="h-4 bg-gray-300 rounded mb-2"></div>
         <div className="h-3 bg-gray-300 rounded w-3/4"></div>
@@ -30,9 +21,37 @@ const SearchSkeleton = () => (
 const ErrorState = ({ error, onRetry }: { error: string; onRetry: () => void }) => (
   <div className="text-center py-12">
     <div className="text-red-500 text-lg mb-4">{error}</div>
-    <button onClick={onRetry} className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">
+    <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md" onClick={onRetry}>
       Try Again
     </button>
+  </div>
+);
+
+const AnimeCard = ({ anime }: { anime: AnimeResult }) => (
+  <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
+    <div className="aspect-[3/4] relative">
+      <img
+        src={anime.poster || anime.image}
+        alt={anime.title}
+        className="w-full h-full object-cover"
+        loading="lazy"
+        onError={(e) => {
+          const target = e.target as HTMLImageElement;
+          target.src = '/placeholder-anime.jpg'; // fallback image
+        }}
+      />
+      <div className="absolute top-2 left-2">
+        <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded">{anime.type}</span>
+      </div>
+    </div>
+    <div className="p-3">
+      <h3 className="font-semibold text-sm mb-2 line-clamp-2" title={anime.title}>{anime.title}</h3>
+      <div className="flex justify-between text-xs text-gray-500">
+        <span>SUB: {anime.sub || 0}</span>
+        <span>DUB: {anime.dub || 0}</span>
+        <span>EPS: {anime.eps || anime.totalEpisodes || 0}</span>
+      </div>
+    </div>
   </div>
 );
 
@@ -60,11 +79,12 @@ export default function SearchPage() {
     setHasSearched(true);
     
     try {
-      const response = await searchAnime(searchQuery);
+      const response = await hiAnimeApi.searchAnime(searchQuery);
       setResults(response.animes || []);
     } catch (err) {
       setError('Failed to search anime. Please try again.');
       setResults([]);
+      console.error('Search error:', err);
     } finally {
       setLoading(false);
     }
@@ -111,27 +131,7 @@ export default function SearchPage() {
       {!loading && !error && results.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {results.map((anime) => (
-            <div key={anime.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="aspect-[3/4] relative">
-                <img
-                  src={anime.poster}
-                  alt={anime.title}
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                />
-                <div className="absolute top-2 left-2">
-                  <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded">{anime.type}</span>
-                </div>
-              </div>
-              <div className="p-3">
-                <h3 className="font-semibold text-sm mb-2 line-clamp-2" title={anime.title}>{anime.title}</h3>
-                <div className="flex justify-between text-xs text-gray-500">
-                  <span>SUB: {anime.sub}</span>
-                  <span>DUB: {anime.dub}</span>
-                  <span>EPS: {anime.eps}</span>
-                </div>
-              </div>
-            </div>
+            <AnimeCard key={anime.id} anime={anime} />
           ))}
         </div>
       )}
