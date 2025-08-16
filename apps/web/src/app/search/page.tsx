@@ -2,7 +2,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useDebounce } from '../../hooks/useDebounce';
-import { hiAnimeApi, Anime } from '../../../lib/api-client';
+import { hiAnimeClient as hiAnimeApi, Anime } from '@kanade/api';
 import AnimeCard from '../../components/AnimeCard';
 
 const SearchSkeleton = () => (
@@ -79,8 +79,8 @@ export default function SearchPage() {
           </p>
           <div className="relative max-w-2xl mx-auto">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} />
               </svg>
             </div>
             <input
@@ -123,7 +123,7 @@ export default function SearchPage() {
         {!loading && !error && results.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             {results.map((anime) => (
-              <AnimeCard 
+              <AnimeCard
                 key={anime.id} 
                 anime={anime}
                 onClick={() => {
@@ -137,8 +137,8 @@ export default function SearchPage() {
         
         {!loading && !error && hasSearched && results.length === 0 && (
           <div className="text-center py-16">
-            <svg className="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.137 0-4.146-.832-5.618-2.218C6.87 13.042 6.9 13.1 7 13c0-5.523 4.477-10 10-10s10 4.477 10 10c0 .9-.12 1.775-.344 2.618A7.959 7.959 0 0112 21c-4.418 0-8-3.582-8-8a8 8 0 018-8z" />
+            <svg className="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.137 0-4.146-.832-5.618-2.218C6.87 13.042 6.9 13.1 7 13c0-5.523 4.477-10 10-10s10 4.477 10 10c0 .9-.12 1.775-.344 2.618A7.959 7.959 0 0112 21c-4.418 0-8-3.582-8-8a8 8 0 018-8z" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} />
             </svg>
             <div className="text-gray-500 text-xl mb-2">No anime found</div>
             <div className="text-gray-400 mb-4">Try searching with different keywords</div>
@@ -150,8 +150,8 @@ export default function SearchPage() {
         
         {!hasSearched && !loading && (
           <div className="text-center py-16">
-            <svg className="mx-auto h-20 w-20 text-gray-300 mb-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            <svg className="mx-auto h-20 w-20 text-gray-300 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} />
             </svg>
             <div className="text-gray-500 text-xl mb-2">Start your anime search</div>
             <div className="text-gray-400">Enter a title above to find your favorite anime</div>
