@@ -218,10 +218,10 @@ export class HiAnimeClient {
       
       // Fallback: try to use the raw array result property
       const fallbackData = {
-        results: response.data.results || response.data.animes || [],
-        totalPages: response.data.totalPages || 1,
-        hasNextPage: response.data.hasNextPage || false,
-        currentPage: response.data.currentPage || page
+        results: response.data.response || response.data.results || response.data.animes || [],
+        totalPages: response.data.pageInfo?.totalPages || response.data.totalPages || 1,
+        hasNextPage: response.data.pageInfo?.hasNextPage || response.data.hasNextPage || false,
+        currentPage: response.data.pageInfo?.currentPage || response.data.currentPage || page
       };
       
       return fallbackData as SearchResult;
