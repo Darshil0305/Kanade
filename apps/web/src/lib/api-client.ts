@@ -2,7 +2,6 @@
  * HiAnime API Client for Kanade
  * Base URL: https://hianime-api-qdks.onrender.com/api/v1
  */
-
 const HIANIME_API_BASE = 'https://hianime-api-qdks.onrender.com/api/v1'
 
 /**
@@ -80,6 +79,7 @@ export interface Anime {
   id: string
   title: string
   image: string
+  poster: string // Add poster field for compatibility
   type: string
   rating?: string
   releaseDate?: string
@@ -88,6 +88,9 @@ export interface Anime {
   description?: string
   totalEpisodes?: number
   duration?: string
+  sub?: number
+  dub?: number
+  eps?: number
 }
 
 export interface Episode {
@@ -150,7 +153,17 @@ class HiAnimeAPI {
     if (status && status !== 'all') params.append('status', status)
     if (genre) params.append('genre', genre)
 
-    return apiFetch<SearchResult>(`/anime/search?${params.toString()}`)
+    const result = await apiFetch<SearchResult>(`/anime/search?${params.toString()}`)
+    
+    // Transform the response to ensure compatibility
+    if (result.animes) {
+      result.animes = result.animes.map(anime => ({
+        ...anime,
+        poster: anime.poster || anime.image // Ensure poster field exists
+      }))
+    }
+
+    return result
   }
 
   /**
@@ -247,6 +260,14 @@ export const hiAnimeApi = new HiAnimeAPI()
  * Export error class for error handling
  */
 export { HiAnimeAPIError }
+
+/**
+ * Compatibility function for existing search page
+ * This ensures the search page can continue using `searchAnime` function
+ */
+export async function searchAnime(query: string): Promise<SearchResult> {
+  return hiAnimeApi.searchAnime(query)
+}
 
 /**
  * Utility function to handle API errors in components
