@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@kanade/ui": "workspace:*",
+    "hls.js": "^1.5.11",
     "next": "^15.0.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^15.0.0",
+    "@types/hls.js": "^1.0.4",
     "@types/jest": "^29.5.8",
     "@types/node": "^20.10.0",
     "@types/react": "19",
