@@ -22,7 +22,6 @@
     "paths": {
       "@/*": ["./src/*"],
       "@/components/*": ["./packages/ui/src/*"],
-      "@/utils/*": ["./packages/utils/src/*"],
       "@/types/*": ["./packages/types/src/*"],
       "@/api/*": ["./packages/api/src/*"]
     }
