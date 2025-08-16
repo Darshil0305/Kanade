@@ -320,7 +320,7 @@ export class HiAnimeClient {
 }
 
 // Export a default instance for convenience
-export const hianimeClient = new HiAnimeClient();
+export const hiAnimeClient = new HiAnimeClient();
 
 // Export the class and utilities
 export default HiAnimeClient;
