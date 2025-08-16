@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { hiAnimeApi, handleAPIError } from '../lib/api-client'
+import { hiAnimeApi, handleAPIError } from '../../lib/api-client'
 
 interface Anime {
   id: string
