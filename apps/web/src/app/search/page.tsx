@@ -113,9 +113,35 @@ const SearchPage: React.FC = () => {
       try {
         setLoading(true);
         const response = await hiAnimeClient.getPopular(1); // Use getPopular instead of searchAnime with empty query
-        setPopularAnimes(response.animes.slice(0, 12)); // Show top 12
+        
+        // Check if response has the expected structure and adapt accordingly
+        let animeResults: AnimeResult[] = [];
+        
+        if (response.results) {
+          // New structure: response.results
+          animeResults = response.results;
+          console.log('Using response.results structure:', animeResults.length, 'animes found');
+        } else if (response.animes) {
+          // Old structure: response.animes (fallback)
+          animeResults = response.animes;
+          console.log('Using response.animes structure:', animeResults.length, 'animes found');
+        } else if (response.data?.results) {
+          // Nested structure: response.data.results
+          animeResults = response.data.results;
+          console.log('Using response.data.results structure:', animeResults.length, 'animes found');
+        } else if (response.data?.animes) {
+          // Nested structure: response.data.animes
+          animeResults = response.data.animes;
+          console.log('Using response.data.animes structure:', animeResults.length, 'animes found');
+        } else {
+          console.warn('Unknown response structure:', response);
+          throw new Error('Unexpected response structure from getPopular API');
+        }
+        
+        setPopularAnimes(animeResults.slice(0, 12)); // Show top 12
       } catch (err) {
         console.error('Failed to load popular animes:', err);
+        setError('Failed to load popular anime. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -138,15 +164,32 @@ const SearchPage: React.FC = () => {
       
       const response = await hiAnimeClient.searchAnime(query, page);
       
-      if (page === 1) {
-        setSearchResults(response.animes);
+      // Apply the same structure adaptation for search results
+      let animeResults: AnimeResult[] = [];
+      
+      if (response.results) {
+        animeResults = response.results;
+      } else if (response.animes) {
+        animeResults = response.animes;
+      } else if (response.data?.results) {
+        animeResults = response.data.results;
+      } else if (response.data?.animes) {
+        animeResults = response.data.animes;
       } else {
-        setSearchResults(prev => [...prev, ...response.animes]);
+        console.warn('Unknown search response structure:', response);
+        animeResults = [];
       }
       
-      setCurrentPage(response.currentPage);
-      setTotalPages(response.totalPages);
-      setHasNextPage(response.hasNextPage);
+      if (page === 1) {
+        setSearchResults(animeResults);
+      } else {
+        setSearchResults(prev => [...prev, ...animeResults]);
+      }
+      
+      // Handle pagination properties with fallback
+      setCurrentPage(response.currentPage || page);
+      setTotalPages(response.totalPages || 1);
+      setHasNextPage(response.hasNextPage || response.hasNext || false);
     } catch (err) {
       setError('Failed to search anime. Please try again.');
       console.error('Search error:', err);
