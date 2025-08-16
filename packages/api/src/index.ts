@@ -6,7 +6,10 @@
  */
 
 // Export the main API client class
-export { HiAnimeClient, hianimeClient as default } from './client';
+export { HiAnimeClient, hiAnimeClient as default } from './client';
+
+// Export the named client instance
+export { hiAnimeClient } from './client';
 
 // Export all types from the types directory for convenience
 export * from './types';
@@ -56,7 +59,10 @@ export const PACKAGE_NAME = '@kanade/api';
  * 
  * @example
  * ```typescript
- * import { HiAnimeClient, SearchFilters } from '@kanade/api';
+ * import { HiAnimeClient, hiAnimeClient, SearchFilters } from '@kanade/api';
+ * 
+ * // Use the default instance
+ * const results = await hiAnimeClient.search('naruto');
  * 
  * // Create custom client instance
  * const customClient = new HiAnimeClient({
