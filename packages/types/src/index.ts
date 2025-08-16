@@ -229,6 +229,214 @@ export const Schemas = {
   SearchResult: SearchResultSchema,
 } as const;
 
+// ===== HIANIME API SPECIFIC TYPES =====
+// These types match the actual HiAnime API response structures
+// and complement the generic types above
+
+/**
+ * HiAnime API Search Options
+ */
+export interface HiAnimeSearchOptions {
+  query: string;
+  page?: number;
+}
+
+/**
+ * HiAnime API Anime Item (as returned by API)
+ */
+export interface HiAnimeAnimeItem {
+  title: string;
+  alternativeTitle: string;
+  id: string;
+  poster: string;
+  type?: string;
+  episodes?: {
+    sub: number;
+    dub: number;
+    eps: number;
+  };
+  duration?: string;
+  rank?: number;
+  quality?: string;
+  aired?: string;
+  synopsis?: string;
+}
+
+/**
+ * HiAnime API Search Response
+ */
+export interface HiAnimeSearchResult {
+  success: boolean;
+  data: {
+    pageInfo: {
+      totalPages: number;
+      currentPage: number;
+      hasNextPage: boolean;
+    };
+    response: HiAnimeAnimeItem[];
+  };
+}
+
+/**
+ * HiAnime API Home Page Data
+ */
+export interface HiAnimeHomePageData {
+  success: boolean;
+  data: {
+    trending: HiAnimeAnimeItem[];
+    topAiring: HiAnimeAnimeItem[];
+    mostPopular: HiAnimeAnimeItem[];
+    mostFavorite: HiAnimeAnimeItem[];
+    latestCompleted: HiAnimeAnimeItem[];
+    latestEpisode: HiAnimeAnimeItem[];
+    newAdded: HiAnimeAnimeItem[];
+    topUpcoming: HiAnimeAnimeItem[];
+    top10: {
+      today: HiAnimeAnimeItem[];
+      week: HiAnimeAnimeItem[];
+      month: HiAnimeAnimeItem[];
+    };
+    genres: string[];
+  };
+}
+
+/**
+ * HiAnime API Detailed Anime Information
+ */
+export interface HiAnimeAnimeDetails {
+  success: boolean;
+  data: {
+    title: string;
+    alternativeTitle: string;
+    japanese: string;
+    id: string;
+    poster: string;
+    rating: string;
+    type: string;
+    episodes: {
+      sub: number;
+      dub: number;
+      eps: number;
+    };
+    synopsis: string;
+    synonyms: string;
+    aired: {
+      from: string;
+      to: string;
+    };
+    premiered: string;
+    duration: string;
+    status: string;
+    MAL_score: string;
+    genres: string[];
+    studios: string;
+    producers: string[];
+    moreSeasons: HiAnimeAnimeItem[];
+    related: HiAnimeAnimeItem[];
+    mostPopular: HiAnimeAnimeItem[];
+    recommended: HiAnimeAnimeItem[];
+  };
+}
+
+/**
+ * HiAnime API Episode Information
+ */
+export interface HiAnimeEpisode {
+  title: string;
+  alternativeTitle: string;
+  id: string;
+  isFiller: boolean;
+}
+
+/**
+ * HiAnime API Episode List Response
+ */
+export interface HiAnimeEpisodeList {
+  success: boolean;
+  data: HiAnimeEpisode[];
+}
+
+/**
+ * HiAnime API Error Response
+ */
+export interface HiAnimeAPIError {
+  success: false;
+  error: {
+    message: string;
+    code?: string;
+  };
+}
+
+/**
+ * HiAnime API Server Information
+ */
+export interface HiAnimeServer {
+  index: number;
+  type: string;
+  id: string;
+  name: string;
+}
+
+/**
+ * HiAnime API Episode Servers Response
+ */
+export interface HiAnimeEpisodeServers {
+  success: boolean;
+  data: {
+    episode: number;
+    sub: HiAnimeServer[];
+    dub: HiAnimeServer[];
+  };
+}
+
+/**
+ * HiAnime API Streaming Data Response
+ */
+export interface HiAnimeStreamingData {
+  success: boolean;
+  data: {
+    streamingLink: {
+      id: string;
+      type: string;
+      link: {
+        file: string;
+        type: string;
+      };
+      tracks: {
+        file: string;
+        kind: string;
+      }[];
+      intro: {
+        start: number;
+        end: number;
+      };
+      outro: {
+        start: number;
+        end: number;
+      };
+      server: string;
+      iframe: string;
+    };
+    servers: string;
+  };
+}
+
+/**
+ * HiAnime API Search Suggestions Response
+ */
+export interface HiAnimeSearchSuggestions {
+  success: boolean;
+  data: {
+    title: string;
+    alternativeTitle: string;
+    poster: string;
+    id: string;
+    aired: string;
+    type: string;
+    duration: string;
+  }[];
+}
+
 /**
  * Utility types
  */
@@ -242,5 +450,5 @@ export type RequireAtLeastOne<T, Keys extends keyof T = keyof T> =
 /**
  * Export version information
  */
-export const VERSION = '0.1.0';
+export const VERSION = '0.2.0';
 export const PACKAGE_NAME = '@kanade/types';
