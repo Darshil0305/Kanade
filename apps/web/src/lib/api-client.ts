@@ -249,12 +249,24 @@ class HiAnimeAPI {
   }> {
     return apiFetch(`/anime/recent-episodes?page=${page}`)
   }
+
+  /**
+   * Generic GET request method for compatibility
+   */
+  async get(endpoint: string): Promise<any> {
+    return apiFetch(endpoint)
+  }
 }
 
 /**
  * Export the API client instance
  */
 export const hiAnimeApi = new HiAnimeAPI()
+
+/**
+ * Export compatibility alias for existing code
+ */
+export const apiClient = hiAnimeApi
 
 /**
  * Export error class for error handling
