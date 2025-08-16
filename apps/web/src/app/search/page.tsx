@@ -112,7 +112,7 @@ const SearchPage: React.FC = () => {
     const loadPopularAnimes = async () => {
       try {
         setLoading(true);
-        const response = await hiAnimeClient.searchAnime('', 1); // Empty query for popular
+        const response = await hiAnimeClient.getPopular(1); // Use getPopular instead of searchAnime with empty query
         setPopularAnimes(response.animes.slice(0, 12)); // Show top 12
       } catch (err) {
         console.error('Failed to load popular animes:', err);
@@ -163,7 +163,7 @@ const SearchPage: React.FC = () => {
     const timeoutId = setTimeout(() => {
       handleSearch(value);
     }, 500);
-
+    
     return () => clearTimeout(timeoutId);
   };
 
